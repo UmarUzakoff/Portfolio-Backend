@@ -1,0 +1,24 @@
+[
+  {
+    "id": "f24f6c1a-9217-44da-93fb-267ce6edcbd3",
+    "title": "First",
+    "description": "real!",
+    "image": "86819699-1eab-48c2-86fe-a53a0c9d784c.jpeg",
+    "username": "Umar",
+    "user_id": "b7b072ce-e6fc-4532-b1bf-27f0de45d738",
+    "isConfirmed": true,
+    "views": 1,
+    "likes": 3
+  },
+  {
+    "id": "0fcaaa3a-0753-4087-872e-882200f34d09",
+    "title": "First",
+    "description": "real!",
+    "image": "81636c9c-1e02-4dbc-854e-d862d1af018d.jpeg",
+    "username": "Umar",
+    "user_id": "5109975b-2f35-4cc7-b5ee-4d99c730ce60",
+    "isConfirmed": false,
+    "views": 0,
+    "likes": 0
+  }
+]
