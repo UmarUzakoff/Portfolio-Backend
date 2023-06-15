@@ -1,17 +1,26 @@
 const { Router } = require("express");
-const { blogPost, blogEdit, blogDelete, getConfirmedBlogs, personalBlogs, exactBlog } = require("../controllers/blogs.controller");
+const {
+  postMessage,
+  adminLogin,
+  getMessages,
+  postProject,
+  getProjects,
+  exactProject,
+  deleteProject,
+  editProject,
+} = require("../controllers/blogs.controller");
 const ID_Validation = require("../middlewares/idValidation.middleware");
 const { tokenMiddleware } = require("../middlewares/token.middleware");
 
 const router = Router();
 
-router.use(tokenMiddleware);
-
-router.get("/blogs", getConfirmedBlogs);
-router.get("/blogs/personalBlogs", personalBlogs);
-router.get("/blogs/:id", ID_Validation, exactBlog);
-router.post("/blogs/post", blogPost);
-router.post("/blogs/edit/:id", blogEdit);
-router.post("/blogs/delete/:id", ID_Validation, blogDelete);
+router.post("/comments", postMessage);
+router.post("/admin/login", adminLogin);
+router.get("/admin/dashboard/messages", tokenMiddleware, getMessages);
+router.post("/admin/dashboard/postProject", tokenMiddleware, postProject);
+router.delete("/admin/deleteProject/:id", tokenMiddleware, ID_Validation, deleteProject);
+router.put("/admin/editProject/:id", tokenMiddleware, ID_Validation, editProject);
+router.get("/projects", getProjects);
+router.get("/projects/:id", ID_Validation, exactProject);
 
 module.exports = router;

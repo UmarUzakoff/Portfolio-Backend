@@ -1,0 +1,50 @@
+[
+  {
+    "id": "889caf0c-2e34-4f44-9316-71174bf29db7",
+    "name": "EshikOyna.uz",
+    "image": "88b54f3a-8437-49ec-8f72-c924aac2fc1a.png",
+    "usedTechnologies": "REACT",
+    "link": "https://fascinating-rabanadas-ca4dbc.netlify.app",
+    "description": "\"RUSTAM PROFIL\" private enterprise was established in 2017 and is needed in the construction industry today profnastil is one with the production of profiles for plasterboard production and installation of aluminum or plastic doors and windows is also doing its work. Services to great experience performed by specialists who have Our products AKFA, IMZO, which is famous in our country for its quality and we use profiles with brands like ENGELBERG"
+  },
+  {
+    "id": "42276981-f83c-4296-8db1-a4889fe73a11",
+    "name": "Imba Studio",
+    "image": "15d1919b-660b-4a6c-9b3f-a546a16eab2b.png",
+    "usedTechnologies": "REACT",
+    "link": "https://clever-zabaione-9522a9.netlify.app",
+    "description": "Imba Studio - PROFESSIONAL VIDEO and PHOTO editing team"
+  },
+  {
+    "id": "0dae20d4-52c7-428c-a185-70ee02963721",
+    "name": "Where is the World?",
+    "image": "7e7fcb7e-2d30-4d41-954f-d951de2bc961.png",
+    "usedTechnologies": "HTML,CSS,JS",
+    "link": "https://spiffy-sopapillas-09852a.netlify.app/",
+    "description": "Where in the world app made with HTML,CSS,JS for a challenge by Frontend Mentor. This is a challenge by www.frontendmentor.io."
+  },
+  {
+    "id": "aa92a6e4-b41f-4375-8921-82421609e43e",
+    "name": "Todo App",
+    "image": "7ac33377-7de5-4f9f-a817-d55fe5b46a78.png",
+    "usedTechnologies": "REACT,SCSS",
+    "link": "https://steady-cajeta-412860.netlify.app",
+    "description": "Built with Semantic HTML5 markup, SCSS custom properties, React framer-motion library, drag with react-beautiful-dnd library .I already did this challenge but this time i decided to give it a shot with React since im learning it. It was hard but i stuck to it till the end. I am satisfied how it turned out. One thing is sure, React is really fun to work with !"
+  },
+  {
+    "id": "20a9aa68-4ad3-4d1f-8ab7-a69945bc0495",
+    "name": "Netflix Clone",
+    "image": "ff63d11a-5cb3-4125-8406-786f9c11aa05.png",
+    "usedTechnologies": "REACT",
+    "link": "https://hilarious-bubblegum-258d30.netlify.app/",
+    "description": "Netflix clone created using React.js and API"
+  },
+  {
+    "id": "0904b697-32d5-4573-971a-3c5bee8bc653",
+    "name": "LinguaMatch",
+    "image": "511aaf14-340e-4b7a-8aee-6ee9047d2fa3.png",
+    "usedTechnologies": "HTML,SCSS,JS",
+    "link": "https://tubular-khapse-de065c.netlify.app",
+    "description": "LinguaMatch, the fun and educational game that helps you learn Russian and English vocabulary! In this game, you'll be presented with pairs of words in both languages, and your goal is to match words that have the same meaning.   Playing LinguaMatch is easy and intuitive. To get started, simply select a level, and the game will present you with a grid of words. Your task is to find matching pairs by clicking on them. When you find a match, the game will highlight the pair, and you'll earn points. The faster you find the matches, the more points you'll earn."
+  }
+]

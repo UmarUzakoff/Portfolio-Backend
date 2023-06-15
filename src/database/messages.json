@@ -1,0 +1,56 @@
+[
+  {
+    "id": "1",
+    "username": "Umarbel",
+    "email": "uzakov@mail.com",
+    "comment": "hello"
+  },
+  {
+    "id": "2",
+    "username": "Uzakoff",
+    "email": "ab@ba.com",
+    "comment": "it's me again!"
+  },
+  {
+    "id": "3",
+    "username": "Umar",
+    "email": "uzakovumar338@gmail.com",
+    "comment": "Hello my brother from another mother!"
+  },
+  {
+    "id": "4",
+    "username": "Umar",
+    "email": "ab@ab.com",
+    "comment": "Lorem ipsum dolor sit amet consectetur adipisicing elit. Eius, dicta nam. Enim voluptate repudiandae iste incidunt exercitationem consequuntur assumenda perferendis, libero vero laudantium non molestiae eveniet ex necessitatibus id fuga placeat ipsa, quae fugiat deserunt ea! Sint optio voluptate at quasi quia eius, animi dicta perspiciatis ut accusantium. Ipsum, omnis.    "
+  },
+  {
+    "id": "f8246813-e1c8-440e-b776-b6e2cb26113e",
+    "username": "kjhb",
+    "email": "kjs2@kma.com",
+    "comment": "jbiaius"
+  },
+  {
+    "id": "e3fa2074-16dc-4171-8715-f3ea01f6a009",
+    "username": "MuhammadQodir",
+    "email": "ouhuk@ja.com",
+    "comment": "Nima gap xay ee.."
+  },
+  {
+    "id": "03e0f06e-6819-4abd-84ce-4b7b597b8d8a",
+    "username": "Shohjahon",
+    "email": "hbk@jbh.com",
+    "comment": "Hello MotherFather!"
+  },
+  {
+    "id": "9c084674-ee49-421f-b700-a854c9f6ce9e",
+    "username": "Umarbek",
+    "email": "kj@j.com",
+    "comment": "Ishqilib"
+  },
+  {
+    "id": "ba248d12-0299-4947-96e7-2313119f4273",
+    "username": "Umarbek",
+    "email": "kjbbjka@jn.com",
+    "comment": "hello"
+  }
+]

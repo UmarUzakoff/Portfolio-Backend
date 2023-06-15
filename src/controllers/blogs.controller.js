@@ -1,101 +1,121 @@
 const { v4: uuid } = require("uuid");
+const bcrypt = require("bcrypt");
+const jwt = require("../utils/jwt");
 const Joi = require("joi");
-const fs = require("fs").promises;
 const Io = require("../utils/Io");
-const Users = new Io("src/database/users.json");
-const User = require("../models/User");
-const Blogs = new Io("src/database/blogs.json");
-const Blog = require("../models/Blog");
-const Views = new Io("src/database/views.json");
-const View = require("../models/View");
+const Messages = new Io("src/database/messages.json");
+const Message = require("../models/Message");
+const Projects = new Io("src/database/projects.json");
+const Project = require("../models/Project");
+const Admins = new Io("src/database/admins.json");
 
-//------------------------------------------------------GET_CONFIRMED_BLOGS
-
-//POSTMAN: GET , http://localhost:4567/blogs
-
-exports.getConfirmedBlogs = async (req, res) => {
+exports.postMessage = async (req, res) => {
   try {
-    const blogs = await Blogs.read();
-    // --USERS CAN SEE ONLY CONFIRMED BLOGS
-    const confirmedBlogs = blogs.filter((blog) => blog.isConfirmed === true);
-    res.status(200).json(confirmedBlogs);
-  } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
-};
+    const messages = await Messages.read();
+    const { username, email, comment } = req.body;
+    //VALIDATION
+    const schema = Joi.object({
+      username: Joi.string().alphanum().required(),
+      email: Joi.string().email().required(),
+      comment: Joi.string().required(),
+    });
 
-//------------------------------------------------------GET_PERSONAL_BLOGS
-
-//POSTMAN: GET , http://localhost:4567/blogs/personalBlogs
-
-exports.personalBlogs = async (req, res) => {
-  try {
-    const blogs = await Blogs.read();
-    // --USERS CAN SEE ONLY PERSONAL BLOGS
-    const personalBlogs = blogs.filter(
-      (blog) => blog.user_id == req.verifiedUser
-    );
-    res.status(200).json(personalBlogs);
-  } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
-};
-
-//------------------------------------------------------GET_EXACT_BLOG-------VIEWS!!!
-
-//POSTMAN: GET , http://localhost:4567/blogs/8b798385-d542-400b-aadf-d0d645d3b0e5
-
-exports.exactBlog = async (req, res) => {
-  try {
-    const { id } = req.params;
-    const blogs = await Blogs.read();
-    const views = await Views.read();
-    // --USERS CAN SEE ONLY ONE BLOG THAT HE WANTS TO SEE WITH THE DETAILED INFORMATION OF THAT BLOG
-    const exactBlog = blogs.find((blog) => blog.id === id);
-    //----------------VIEWS
-    const findView = views.find(
-      (view) => view.blog_id == id && view.user_id == req.verifiedUser
-    );
-    if (!findView) {
-      const newView = new View(id, req.verifiedUser);
-      const data = views.length ? [...views, newView] : [newView];
-      Views.write(data);
-      var viewsOfThisBlog = views.filter((view) => view.blog_id === id);
-      const restOfBlogs = blogs.filter((blog) => blog.id !== id);
-      blogs.forEach((blog) => {
-        if (blog.id === id) {
-          blog.views = viewsOfThisBlog.length + 1;
-          return [...restOfBlogs, blog];
-        }
-      });
-      Blogs.write(blogs);
+    const { error } = schema.validate({ username, email, comment });
+    if (error) {
+      return res.status(403).json({ error: error.message });
     }
-    res.status(200).json(exactBlog);
+    //---ID
+    const id = uuid();
+
+    //---NEWBLOG
+    const newMessage = new Message(id, username, email, comment);
+
+    const data = messages.length ? [...messages, newMessage] : [newMessage];
+    Messages.write(data);
+    res.status(201).json({
+      message: {
+        uz: "Xabar yuborildi! ",
+        en: "Got Your Message 😉",
+        ru: "Отправлено!",
+      },
+    });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
 };
 
-//------------------------------------------------------POST
-
-//POSTMAN: POST , http://localhost:4567/blogs/delete/8b798385-d542-400b-aadf-d0d645d3b0e5 , form-data: title && image && description ...
-
-exports.blogPost = async (req, res) => {
+exports.adminLogin = async (req, res) => {
   try {
-    const users = await Users.read();
-    const blogs = await Blogs.read();
-    const verifiedUser = users.find((user) => user.id === req.verifiedUser);
-    const { title, description } = req.body;
+    const { email, password } = req.body;
+    const admins = await Admins.read();
+
+    //VALIDATION
+    const schema = Joi.object({
+      email: Joi.string().email().required(),
+      password: Joi.string().required(),
+    });
+
+    const { error } = schema.validate({ email, password });
+    if (error) {
+      return res.status(403).json({ error: error.message });
+    }
+
+    //Finding a username and Comparing Hash Values
+    const findUser = admins.find((user) => user.email === email);
+    if (!findUser) {
+      return res.status(404).json({ error: "Incorrect email or password!" });
+    }
+    const comparePassword = await bcrypt.compare(password, findUser.password);
+    if (!comparePassword) {
+      return res.status(404).json({ error: "Incorrect email or password!" });
+    }
+    //TOKEN
+    const token = jwt.sign({ password: findUser.password });
+    res.status(200).json({
+      message: {
+        uz: "Xush kelibsiz!",
+        en: "Welcome Back!",
+        ru: "Добро Пожаловать!",
+      },
+      token,
+    });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
+exports.getMessages = async (req, res) => {
+  try {
+    const messages = await Messages.read();
+    res.status(200).json(messages);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+exports.postProject = async (req, res) => {
+  try {
+    const projects = await Projects.read();
+    const { name, description, link, usedTechnologies } = req.body;
     const { image } = req.files;
     //VALIDATION
     const schema = Joi.object({
-      title: Joi.string().required(),
+      name: Joi.string().required(),
       description: Joi.string().required(),
+      link: Joi.string().required(),
       image: Joi.required(),
+      usedTechnologies: Joi.string().required(),
     });
 
-    const { error } = schema.validate({ title, description, image });
+    const { error } = schema.validate({
+      name,
+      description,
+      image,
+      link,
+      usedTechnologies,
+    });
     if (error) {
+      console.log(error.message);
       return res.status(403).json({ error: error.message });
     }
 
@@ -109,106 +129,108 @@ exports.blogPost = async (req, res) => {
 
     //---ID
     const id = uuid();
-    console.log(req.verifiedUser);
-    const user_id = verifiedUser.id;
+
+    //---USED TECHNOLOGIES
+    let usedTechsArr = usedTechnologies
+      .toUpperCase()
+      .split(",")
+      .map((item) => item.trim());
+
+    let usedTechs = usedTechsArr.join(",");
 
     //---NEWBLOG
-    const newBlog = new Blog(id, title, description, imageName, user_id);
+    const newProject = new Project(
+      id,
+      name,
+      imageName,
+      usedTechs,
+      link,
+      description
+    );
 
-    const data = blogs.length ? [...blogs, newBlog] : [newBlog];
-    Blogs.write(data);
+    const data = projects.length ? [...projects, newProject] : [newProject];
+    // console.log(projects.find(p => p.usedTechnologies.includes("PHP")));
+    Projects.write(data);
     res.status(201).json({
-      message:
-        "Blog created successfully! Soon administrator will check and confirm it.",
+      message: {
+        uz: "Loyihangiz portfolioga muvaffaqiyatli qo'shildi!",
+        en: "Your project was successfully added to the portfolio!",
+        ru: "Ваш проект успешно добавлен в портфолио!",
+      },
     });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
 };
 
-//------------------------------------------------------EDIT
-
-//POSTMAN: POST , http://localhost:4567/blogs/edit/8b798385-d542-400b-aadf-d0d645d3b0e5 , form-data: title || image || description ...
-
-exports.blogEdit = async (req, res) => {
+exports.getProjects = async (req, res) => {
   try {
-    const blogs = await Blogs.read();
+    const projects = await Projects.read();
+    res.status(200).json(projects);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+exports.exactProject = async (req, res) => {
+  try {
     const { id } = req.params;
-    const { title, description } = req.body;
-    const { image } = req.files;
-    // USER FAQAT O'ZI KIRITGAN BLOGLARNIGINA O'ZGARTIRA OLADI
-    const personalBlogs = blogs.filter(
-      (blog) => blog.user_id == req.verifiedUser
-    );
+    const projects = await Projects.read();
+    const exactProject = projects.find((project) => project.id === id);
+    res.status(200).json(exactProject);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+exports.deleteProject = async (req, res) => {
+  try {
+    const projects = await Projects.read();
+    const { id } = req.params;
+    const restOfProjects = projects.filter((project) => project.id !== id);
+    Projects.write(restOfProjects);
+    res.status(200).json({ message: "Project deleted successfully!" });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+exports.editProject = async (req, res) => {
+  try {
+    const projects = await Projects.read();
+    const { id } = req.params;
+    const { name, description, link, usedTechnologies } = req.body;
     //VALIDATION
     const schema = Joi.object({
-      id: Joi.required(),
-      title: Joi.string(),
-      description: Joi.string(),
+      name: Joi.string().required(),
+      description: Joi.string().required(),
+      link: Joi.string().required(),
+      usedTechnologies: Joi.string().required(),
     });
 
-    const { error } = schema.validate({ id, title, description });
+    const { error } = schema.validate({
+      name,
+      description,
+      link,
+      usedTechnologies,
+    });
     if (error) {
+      console.log(error.message);
       return res.status(403).json({ error: error.message });
     }
     //EDIT
-    const findBlog = personalBlogs.find((blog) => blog.id === id);
-    if (!findBlog) {
-      return res.status(403).json({
-        message:
-          "You are not allowed to edit this blog! You can edit only your personal blogs.",
-      });
-    }
-    const restOfblogs = personalBlogs.filter((blog) => blog.id !== id);
-    personalBlogs.forEach((blog) => {
-      if (blog.id === id) {
-        blog.title = title;
-        blog.description = description;
-        if (image) {
-          //IMAGE
-          let imageName = `${uuid()}.${image.mimetype.split("/")[1]}`;
-          if (image.mimetype === "image/svg+xml") {
-            //SVG fayllarning oxiri MIME type da svg+xml bilan tugar ekan, uni UIga chiqarish uchun image .svg bilan tugashi kerak, shuning uchun shunday qildim
-            imageName = `${uuid()}.svg`;
-          }
-          image.mv(`${process.cwd()}/uploads/${imageName}`);
-          //UPLOADS_dan ESKI RASMNI CHOPISH XOTIRADAN JOY OLMASLIGI UCHUN, LEKIN HAQIQIY PROJECT_larda ARCHIVE_ga OLIB QO'YILINADI
-          fs.unlink(`${process.cwd()}/uploads/${blog.image}`);
-          blog.image = imageName;
-        }
-        return [...restOfblogs, blog];
+    const restOfProjects = projects.filter((project) => project.id !== id);
+    projects.forEach((project) => {
+      if (project.id === id) {
+        project.name = name;
+        project.description = description;
+        project.link = link;
+        project.usedTechnologies = usedTechnologies;
+        return [...restOfProjects, project];
       }
     });
-    Blogs.write(blogs);
-    res.status(200).json({ message: "Blog edited successfully!" });
-  } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
-};
-
-//------------------------------------------------------DELETE
-
-//POSTMAN: POST , http://localhost:4567/blogs/delete/8b798385-d542-400b-aadf-d0d645d3b0e5
-
-exports.blogDelete = async (req, res) => {
-  try {
-    const blogs = await Blogs.read();
-    const { id } = req.params;
-    // USER FAQAT O'ZI KIRITGAN BLOGLARNIGINA O'ZGARTIRA OLADI
-    const personalBlogs = blogs.filter(
-      (blog) => blog.user_id == req.verifiedUser
-    );
-    //DELETE
-    const findBlog = personalBlogs.find((blog) => blog.id === id);
-    if (!findBlog) {
-      return res.status(403).json({
-        message:
-          "You are not allowed to delete this blog! You can delete only your personal blogs.",
-      });
-    }
-    const restOfblogs = blogs.filter((blog) => blog.id !== id);
-    Blogs.write(restOfblogs);
-    res.status(200).json({ message: "Blog deleted successfully!" });
+    Projects.write(projects);
+    res.status(200).json({ message: "Project edited successfully!" });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }

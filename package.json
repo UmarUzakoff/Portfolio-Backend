@@ -3,8 +3,13 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
+  "engines": {
+     "node": ">=18"
+  },
   "scripts": {
-    "dev": "nodemon src/app"
+    "dev": "nodemon src/app",
+    "build": "npm install && rimraf ./build",
+    "start": "node build/index.js"
   },
   "author": "",
   "license": "ISC",
